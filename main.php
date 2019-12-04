@@ -68,7 +68,7 @@
 
         </div>
         <div data-options="region:'center' ">
-           
+		<?php include ('usuarios.php'); ?>
         </div>
  
  

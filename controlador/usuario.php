@@ -11,23 +11,9 @@ if( !isset($op) )
 {
   echo  json_encode( "No se definió  la variable op");
   exit;
-}
-switch ($op) {
-    case 'login': 	
-        $txtusuario = pg_escape_string( $_POST['txtusuario']);
-        $txtpassword = pg_escape_string( $_POST['txtpassword']);
-        $sql = "SELECT * FROM usuario where login='$txtusuario' and password='$txtpassword' ";
-        $result = pg_query($dbconn, $sql);
-        if (!$result) {
-               echo json_encode("Ocurrió un error en la consulta" );
-        exit;
-        }
-        while($row = pg_fetch_row($result)) {
-            $data[] = $row;
-        }        
-        if(isset($data))
-                echo json_encode($data);
-    break; 
+} 
+ 
+switch ($op) { 
     case 'select':
             $resultqry = pg_query($dbconn, 'SELECT * FROM usuario');
             if (!$resultqry) {
@@ -44,8 +30,75 @@ switch ($op) {
             echo json_encode($result);
 
             break;
+ case 'insert':
+        $response = array( 
+                'status' => 0, 
+                'msg' =>  '  Se produjeron algunos problemas. Inténtalo de nuevo.' 
+            );          
+            if(!empty($_POST['login']) && !empty($_POST['nombre'])  ){ 
+                $login = $_POST['login']; 
+                $nombre = $_POST['nombre'];   
+                $sql = "INSERT INTO usuario(nombre,password,login) VALUES ('$login','$nombre','$login' )"; 
+                $insert = pg_query($sql); 
+                 
+                if($insert){ 
+                    $response['status'] = 1; 
+                    $response['msg'] = '¡Los datos del usuario se han agregado con éxito!'; 
+                } 
+            }else{ 
+                $response['msg'] = 'Por favor complete todos los campos obligatorios.'; 
+            } 
+             
+            echo json_encode($response); 
+ break; 
+
+ case 'update':
+        $response = array( 
+                'status' => 0, 
+                'msg' =>  '  Se produjeron algunos problemas. Inténtalo de nuevo.' 
+            );          
+            if(!empty($_POST['login']) && !empty($_POST['nombre'])  ){ 
+                $login = $_POST['login']; 
+                $nombre = $_POST['nombre'];   
+                $sql = "INSERT INTO usuario(nombre,password,login) VALUES ('$login','$nombre','$login' )"; 
+                $insert = pg_query($sql); 
+                 
+                if($insert){ 
+                    $response['status'] = 1; 
+                    $response['msg'] = '¡Los datos del usuario se han agregado con éxito!'; 
+                } 
+            }else{ 
+                $response['msg'] = 'Por favor complete todos los campos obligatorios.'; 
+            } 
+             
+            echo json_encode($response); 
+
+ break; 
+ case 'delete':
+        $response = array( 
+                'status' => 0, 
+                'msg' =>  '  Se produjeron algunos problemas. Inténtalo de nuevo.' 
+            );          
+            if(!empty($_POST['login'])   ){ 
+                $login = $_POST['login']; 
+              
+                $sql = " delete from usuario where login ='$login' "; 
+                $insert = pg_query($sql); 
+                 
+                if($insert){ 
+                    $response['status'] = 1; 
+                    $response['msg'] = '¡Los datos del usuario se han eliminado con éxito!'; 
+                } 
+            }else{ 
+                $response['msg'] = 'Por favor complete todos los campos obligatorios.'; 
+            } 
+             
+            echo json_encode($response); 
+
+ break; 
     default:
             echo json_encode( "Error no existe la opcion ".$op);
+
 
             }
 ?>
