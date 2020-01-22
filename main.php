@@ -34,41 +34,41 @@
         
         <ul class="easyui-tree">
 			<li>
-				<span>Menu Principal</span>
+				<span>Menu</span>
 				<ul>
 					<li>
 						<span>Seguridad</span>
 						<ul>
 							<li>
-								<span>Rol de Usuarios</span>
+								   <a  href="main.php?pag=listausuario">  Usuarios  </a> 
 							</li>
 							<li>
-								<span>Usuario</span>
+								   <a  href="main.php?pag=usuarios">  Usuarios2  </a> 
 							</li>
 							<li>
-								<span>Accesos</span>
+								<span>Rol de Usuario</span>
 							</li>
+							 
 						</ul>
 					</li>
-					<li>
-						<span>Program Files</span>
-						<ul>
-							<li>Intel</li>
-							<li>Java</li>
-							<li>Microsoft Office</li>
-							<li>Games</li>
-						</ul>
+				 l>
 					</li>
-					<li>index.html</li>
-					<li>about.html</li>
-					<li>welcome.html</li>
+					 
 				</ul>
 			</li>
 		</ul>
 
         </div>
         <div data-options="region:'center' ">
-		<?php include ('usuarios.php'); ?>
+		<?php
+		if(  isset($_GET["pag"])){
+			$page = $_GET["pag"];	
+			$page = $page.".php";
+			include ($page);
+		}	
+			?>
+	
+	
         </div>
  
  

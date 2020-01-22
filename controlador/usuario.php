@@ -31,24 +31,72 @@ switch ($op) {
 
             break;
  case 'insert':
+    $archivoguardado=0;
+    $mensaje = "";
         $response = array( 
                 'status' => 0, 
                 'msg' =>  '  Se produjeron algunos problemas. Inténtalo de nuevo.' 
             );          
-            if(!empty($_POST['login']) && !empty($_POST['nombre'])  ){ 
-                $login = $_POST['login']; 
-                $nombre = $_POST['nombre'];   
-                $sql = "INSERT INTO usuario(nombre,password,login) VALUES ('$login','$nombre','$login' )"; 
-                $insert = pg_query($sql); 
-                 
-                if($insert){ 
-                    $response['status'] = 1; 
-                    $response['msg'] = '¡Los datos del usuario se han agregado con éxito!'; 
-                } 
-            }else{ 
-                $response['msg'] = 'Por favor complete todos los campos obligatorios.'; 
-            } 
+
+            if( !empty( $_FILES['image']['name'])    )   
+            {  
+                  //codigo para almacenar la imagen
+              $currentDir = getcwd();
+              $uploadDirectory = "/imagenes/";  
              
+              $fileExtensions = ['jpeg','jpg','png']; // Obtenga la  extension del archivo  
+              $fileName = $_FILES['image']['name'];
+              $fileSize = $_FILES['image']['size'];
+              $fileTmpName  = $_FILES['image']['tmp_name'];
+              $fileType = $_FILES['image']['type'];
+              $fileExtension = strtolower(end(explode('.',$fileName)));  
+              $uploadPath = $currentDir . $uploadDirectory . basename($fileName);       
+              //$mysqli->insert_id      
+              if (! in_array($fileExtension,$fileExtensions)) {
+                    $mensaje  = "Esta extensión de archivo no está permitida. Cargue un archivo JPEG o PNG";
+                  }
+          
+              if ($fileSize > 1000000) {
+                    $mensaje = "Este archivo tiene más de 1 MB. Lo sentimos, tiene que ser menor o igual a 1 MB";
+                  }  
+                  if (empty($mensaje)) {
+                      $didUpload = move_uploaded_file($fileTmpName, $uploadPath);  
+                      if ($didUpload) {
+                        $archivoguardado=1;                       
+                      } else {
+                        $mensaje =  "Se produjo un error en alguna parte. Inténtalo de nuevo o contacta al administrador";
+                      }
+                  }  
+        
+            }
+            if( !empty( $_FILES['image']['name']) && empty( $mensaje) == false )
+            {
+                $response['msg'] =   $mensaje;
+
+                echo json_encode($response);  
+                exit;
+            }
+
+            $imagen ="";
+            if(  $archivoguardado==1 ){ 
+                
+                $imagen ='$fileName';
+            }  
+            
+            $login = $_POST['login']; 
+            $password = $_POST['password'];   
+            $nombre = $_POST['nombre'];  
+            $fechanacimiento = $_POST['fechanacimiento'];  
+            $codigo_rol = $_POST['codigo_rol'];            
+            $sql = " INSERT INTO usuario(nombre,password,login,imagen,fechanacimiento,codigo_rol) VALUES ('$nombre','$password','$login', '$imagen','$fechanacimiento',  $codigo_rol) "; 
+            $insert = pg_query($dbconn,$sql); 
+             
+            if($insert){ 
+                $response['status'] = 1; 
+                $response['msg'] = '¡Los datos del usuario se han agregado con éxito!'; 
+            } 
+
+            
             echo json_encode($response); 
  break; 
 
@@ -60,8 +108,8 @@ switch ($op) {
             if(!empty($_POST['login']) && !empty($_POST['nombre'])  ){ 
                 $login = $_POST['login']; 
                 $nombre = $_POST['nombre'];   
-                $sql = "INSERT INTO usuario(nombre,password,login) VALUES ('$login','$nombre','$login' )"; 
-                $insert = pg_query($sql); 
+                $sql = "INSERT INTO usuario(nombre,password,login) VALUES ('$login','$nombre','$login', $fileName  )"; 
+                $insert = pg_query($dbconn,$sql); 
                  
                 if($insert){ 
                     $response['status'] = 1; 
@@ -83,17 +131,18 @@ switch ($op) {
                 $login = $_POST['login']; 
               
                 $sql = " delete from usuario where login ='$login' "; 
-                $insert = pg_query($sql); 
+                $result = pg_query($sql); 
                  
-                if($insert){ 
-                    $response['status'] = 1; 
-                    $response['msg'] = '¡Los datos del usuario se han eliminado con éxito!'; 
-                } 
+                if ($result){
+                        echo json_encode(array('success'=>true));
+                } else {
+                        echo json_encode(array('errorMsg'=>'Some errors occured.'));
+                }
             }else{ 
                 $response['msg'] = 'Por favor complete todos los campos obligatorios.'; 
             } 
              
-            echo json_encode($response); 
+            
 
  break; 
     default:

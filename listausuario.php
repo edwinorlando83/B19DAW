@@ -10,42 +10,21 @@
                 <th field="nombre" width="100">NOMBRE</th>
             </tr>
         </thead>
-    </table>
-      
-     
+    </table> 
    
     <div id="toolbar">      
         <input class="easyui-searchbox" data-options="prompt:'Buscar' " style="width:250px">
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">Nuevo</a>
+        <a  href="main.php?pag=newusuario" class="easyui-linkbutton" iconCls="icon-add" plain="true"  >Nuevo</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Editar</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Eliminar</a>
         <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="refrescar()">Refrescar</a>
     </div>
     
-    <div id="dlg" class="easyui-dialog" style="width:90%; height:90%;"   data-options="novalidate:false,closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'">
-        <form id="frmUSuario" method="post"     style="margin:0;padding:20px 50px">
-            <h3>User Information</h3>
-            <div style="margin-bottom:10px">
-                <input name="login" class="easyui-textbox" required="true" label="First Name:" style="width:100%">
-            </div>
-            <div style="margin-bottom:10px">
-                <input name="nombre" class="easyui-textbox" required="true" label="Last Name:" style="width:100%">
-            </div> 
-             
-        </form>
-    </div>
-    <div id="dlg-buttons">
-        <a href="javascript:void(0)" id='btnSave' class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Save</a>
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>
-    </div>   
+  
 
     <script type="text/javascript">
         var url;
-        function newUser(){
-            $('#dlg').dialog('open').dialog('center').dialog('setTitle','Ingresar Usuario');
-            $('#frmUSuario').form('clear');
-            url = 'controlador/usuario.php?op=insert';
-        }
+        
         function editUser(){
             var row = $('#dg').datagrid('getSelected');
             if (row){
@@ -54,34 +33,7 @@
                 url = 'controlador/usuario.php?op=edit&&id='+row.id;
             }
         }
-        function saveUser(){
- 
-                  $.messager.progress({
-                       title:'Por favor espere',
-                      msg:'Cargando datos...'
-                      });
-
-           $('#frmUSuario').form('submit',{
-                url: url,
-                onSubmit: function(){
-                    return $(this).form('validate');
-                },
-                success: function(result){                   
-                    $.messager.progress('close');
-                    var result = eval('('+result+')');
-                    console.log(result);                  
-                    if (result.errorMsg){ 
-                        $.messager.show({
-                            title: 'Error',
-                            msg: result.errorMsg
-                        });
-                    } else {  
-                        $('#dlg').dialog('close');      
-                        $('#dg').datagrid('reload');   
-                    }
-                }
-            }); 
-        }
+       
 
 
         function destroyUser(){
